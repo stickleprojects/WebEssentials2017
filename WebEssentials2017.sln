@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEssentials.Test", "test\WebEssentials.Test\WebEssentials.Test.csproj", "{A3092CB1-EE06-443E-A338-66916BCB8FB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIXBundler.Core", "VSIXBundler.Core\VSIXBundler.Core.csproj", "{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,9 +41,20 @@ Global
 		{A3092CB1-EE06-443E-A338-66916BCB8FB4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A3092CB1-EE06-443E-A338-66916BCB8FB4}.Release|x86.ActiveCfg = Release|Any CPU
 		{A3092CB1-EE06-443E-A338-66916BCB8FB4}.Release|x86.Build.0 = Release|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Debug|x86.Build.0 = Debug|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Release|x86.ActiveCfg = Release|Any CPU
+		{D25CF7FA-AAAB-4F61-959A-949FFB7A9C24}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CF5DE40-78C1-42BC-872F-7A525DA77301}
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 67682906-08a4-438e-a745-8745ea6b9639

@@ -1,8 +1,11 @@
-﻿using WebEssentials;
+﻿using System.IO;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Newtonsoft.Json;
-using System.IO;
-using static WebEssentials.DataStore;
+
+using VSIXBundler.Core;
+using VSIXBundler.Core.Installer;
 
 namespace WebEssentials.Test
 {
@@ -12,25 +15,31 @@ namespace WebEssentials.Test
         private string _logFile;
         private ExtensionEntry _entry;
         private IRegistryKey _registry;
+        private ISettings _settings;
 
         [TestInitialize]
         public void Setup()
         {
             _logFile = Path.Combine(Path.GetTempPath(), "logfile.json");
+            _settings = new Settings("", "", "", new ResourceProviderFactory().Create());
+            _settings.LogFilePath = _logFile;
+
             _entry = new ExtensionEntry { Id = "id" };
             _registry = new StaticRegistryKey();
+
+            Cleanup();
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            File.Delete(_logFile);
+            if (File.Exists(_logFile)) File.Delete(_logFile);
         }
 
         [TestMethod]
         public void ExtensionInstalledNoLogFile()
         {
-            var store = new DataStore(_registry, _logFile);
+            var store = new DataStore(_registry, _settings);
             store.MarkInstalled(_entry);
 
             Assert.AreEqual(1, store.Log.Count);
@@ -46,7 +55,7 @@ namespace WebEssentials.Test
         [TestMethod]
         public void ExtensionUninstalledNoLogFile()
         {
-            var store = new DataStore(_registry, _logFile);
+            var store = new DataStore(_registry, _settings);
             store.MarkUninstalled(_entry);
             store.Save();
 
@@ -59,12 +68,12 @@ namespace WebEssentials.Test
         [TestMethod]
         public void LogFileExist()
         {
-            var msg = new[] { new LogMessage(_entry, "Installed") };
+            var msg = new[] { new DataStore.LogMessage(_entry, "Installed") };
 
             var json = JsonConvert.SerializeObject(msg);
             File.WriteAllText(_logFile, json);
 
-            var store = new DataStore(_registry, _logFile);
+            var store = new DataStore(_registry, _settings);
 
             Assert.IsTrue(store.HasBeenInstalled(_entry.Id));
             Assert.AreEqual(1, store.Log.Count);
@@ -74,12 +83,12 @@ namespace WebEssentials.Test
         [TestMethod]
         public void Reset()
         {
-            var msg = new[] { new LogMessage(_entry, "Installed") };
+            var msg = new[] { new DataStore.LogMessage(_entry, "Installed") };
 
             var json = JsonConvert.SerializeObject(msg);
             File.WriteAllText(_logFile, json);
 
-            var store = new DataStore(_registry, _logFile);
+            var store = new DataStore(_registry, _settings);
 
             Assert.AreEqual(1, store.Log.Count);
 

@@ -1,4 +1,4 @@
-﻿using WebEssentials;
+﻿using VSIXBundler.Core.Installer;
 
 namespace WebEssentials.Test
 {

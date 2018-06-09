@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+
+using VSIXBundler.Core;
+using VSIXBundler.Core.Helpers;
+using VSIXBundler.Core.Installer;
+
 using Tasks = System.Threading.Tasks;
 
 namespace WebEssentials
@@ -16,12 +22,39 @@ namespace WebEssentials
     {
         protected override async Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            await ShowModalCommand.InitializeAsync(this);
+            await ShowModalCommand.InitializeAsync(this, getLogger());
 
             // Load installer package
             var shell = await GetServiceAsync(typeof(SVsShell)) as IVsShell;
             var guid = new Guid(InstallerPackage._packageGuid);
             ErrorHandler.ThrowOnFailure(shell.LoadPackage(guid, out IVsPackage ppPackage));
+        }
+
+        private ILogger getLogger()
+        {
+            var settings = new SettingsFactory().Create();
+            return new LoggerFactory().Create(settings);
+        }
+    }
+
+    internal class LoggerFactory
+    {
+        public ILogger Create(ISettings settings)
+        {
+            return new Logger(settings);
+        }
+    }
+
+    internal class SettingsFactory
+    {
+        public string VSIXName = "Bundler";
+        public Uri LiveFeedUrl = new Uri("http://www.bbc.co.cuk");
+        public string RegistrySubKey => VSIXName;
+
+        public ISettings Create()
+        {
+            var rp = new ResourceProviderFactory().Create();
+            return new Settings(VSIXName, LiveFeedUrl.ToString(), RegistrySubKey, rp);
         }
     }
 
@@ -34,8 +67,14 @@ namespace WebEssentials
 
         protected override async Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            InstallerService.Initialize(this);
+            var settings = new SettingsFactory().Create();
+            InstallerService.Initialize(this, settings, getLogger(settings));
             await InstallerService.RunAsync().ConfigureAwait(false);
+        }
+
+        private ILogger getLogger(ISettings settings)
+        {
+            return new LoggerFactory().Create(settings);
         }
     }
 }

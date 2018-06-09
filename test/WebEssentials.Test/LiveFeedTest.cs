@@ -1,7 +1,12 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using VSIXBundler.Core;
+using VSIXBundler.Core.Helpers;
+using VSIXBundler.Core.Installer;
 
 namespace WebEssentials.Test
 {
@@ -9,11 +14,17 @@ namespace WebEssentials.Test
     public class LiveFeedTest
     {
         private string _localPath;
+        private ILogger _logger;
+        private Settings _settings;
 
         [TestInitialize]
         public void Setup()
         {
             _localPath = Path.Combine(Path.GetTempPath(), "feed.json");
+            var resourceProvider = new ResourceProviderFactory().Create();
+            _settings = new Settings(resourceProvider) { LiveFeedCachePath = _localPath };
+
+            _logger = new LoggerFactory().Create(_settings);
             File.Delete(_localPath);
         }
 
@@ -21,7 +32,7 @@ namespace WebEssentials.Test
         public async Task UpdateAsync()
         {
             var file = new FileInfo("..\\..\\artifacts\\feed.json");
-            var feed = new LiveFeed(file.FullName, _localPath);
+            var feed = new LiveFeed(file.FullName, _localPath, _logger);
 
             await feed.UpdateAsync();
             File.Delete(_localPath);
@@ -35,7 +46,7 @@ namespace WebEssentials.Test
         [TestMethod]
         public async Task UpdateInvalidJSONAsync()
         {
-            var feed = new LiveFeed("http://example.com", _localPath);
+            var feed = new LiveFeed("http://example.com", _localPath, _logger);
 
             await feed.UpdateAsync();
 
@@ -46,7 +57,7 @@ namespace WebEssentials.Test
         [TestMethod]
         public async Task Update404Async()
         {
-            var feed = new LiveFeed("http://asdlfkhasdflijsdflisjdfjoi23498734so08s0d8f.dk", _localPath);
+            var feed = new LiveFeed("http://asdlfkhasdflijsdflisjdfjoi23498734so08s0d8f.dk", _localPath, _logger);
 
             await feed.UpdateAsync();
 
@@ -57,7 +68,7 @@ namespace WebEssentials.Test
         [TestMethod]
         public async Task ParsingAsync()
         {
-            var feed = new LiveFeed("", _localPath);
+            var feed = new LiveFeed("", _localPath, _logger);
 
             string content = @"{
             ""Add New File"": {
@@ -79,7 +90,7 @@ namespace WebEssentials.Test
         [TestMethod]
         public async Task ParsingInvalidJsonAsync()
         {
-            var feed = new LiveFeed("", _localPath);
+            var feed = new LiveFeed("", _localPath, _logger);
 
             string content = "invalid json";
 

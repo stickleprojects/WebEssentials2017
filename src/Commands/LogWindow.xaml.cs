@@ -4,6 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
+using VSIXBundler.Core.Helpers;
+using VSIXBundler.Core.Installer;
+
 namespace WebEssentials.Commands
 {
     /// <summary>
@@ -11,8 +14,11 @@ namespace WebEssentials.Commands
     /// </summary>
     public partial class LogWindow : Window
     {
-        public LogWindow()
+        private readonly ILogger _logger;
+
+        public LogWindow(ILogger logger)
         {
+            _logger = logger;
             InitializeComponent();
 
             Loaded += (s, e) =>
@@ -48,7 +54,7 @@ namespace WebEssentials.Commands
             }
             catch (Exception ex)
             {
-                Logger.Log(ex.ToString());
+                _logger.Log(ex.ToString());
             }
         }
     }
